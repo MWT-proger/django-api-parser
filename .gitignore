@@ -381,4 +381,5 @@ pip-selfcheck.json
 
 .env
 deploy/.env
+.vscode
 # End of https://www.toptal.com/developers/gitignore/api/python,django,venv,pycharm

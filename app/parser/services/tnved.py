@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 
 class TnvedData:
-    def __init__(self, number:str, name:str):
-        self.number = number
+    def __init__(self, code:str, name:str):
+        self.code = code
         self.name = name
 
 
@@ -39,7 +39,7 @@ def get_tnved_code(product_name: str, driver) -> List[TnvedData]:
             class_="MuiTypography-root MuiTypography-body2 css-10x1jud")
 
         for code, name in zip(codes, names):
-            tnvedDataList.append(TnvedData(number=code.text, name=name.text))
+            tnvedDataList.append(TnvedData(code=code.text, name=name.text))
 
     except:
         pass
