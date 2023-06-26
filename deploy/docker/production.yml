@@ -2,45 +2,43 @@ version: '3.8'
 
 services:
 
-  web:
+  app:
+    container_name: prodApp
     build:
-      context: config
-      dockerfile: Dockerfile.prod
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+      context: ../../.
+      dockerfile: deploy/docker/app/Dockerfile
+    command: ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:${APP_PORT}"]
+    entrypoint: ["./entrypoint.sh"]
     volumes:
-      - static_volume:/home/app/config/staticfiles
-      - media_volume:/home/app/config/media
+      - "db_volume:/usr/app/data:rw"
+      - "static_volume:/usr/app/staticfiles"
     expose:
-      - 8000
-    env_file:
-      - example.env.prod
-    depends_on:
-      - db
+      - "${APP_PORT}"
+    environment:
+      - DEBUG=${APP_DEBUG}
+      - SECRET_KEY=${APP_SECRET_KEY}
+      - ALLOWED_HOSTS=${APP_ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${APP_CSRF_TRUSTED_ORIGINS}
 
-  db:
-    image: postgres:14.3-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-      - ./db_postgresql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
-    env_file:
-      - example.env.prod.db
+      - DB_NAME=${DB_NAME}
 
   nginx:
-    build: ./nginx
+    container_name: prodNginx
+    build:
+      context: ../../.
+      dockerfile: deploy/docker/nginx/Dockerfile
     volumes:
       - static_volume:/home/app/config/staticfiles
-      - media_volume:/home/app/config/media
     ports:
-      - 80:80
+      - "80:80"
     depends_on:
-      - web
+      - app
     environment:
-      - NGINX_HOST=localhost
+      - NGINX_HOST=${NGINX_HOST}
       - NGINX_PORT=80
-      - APP_HOST=web
+      - APP_HOST=app
       - APP_PORT=${APP_PORT}
 
 volumes:
-  postgres_data:
+  db_volume:
   static_volume:
-  media_volume:

@@ -5,9 +5,8 @@ services:
   app:
     build:
       context: ../../.
-      dockerfile: deploy/docker/app/Dockerfile.dev
+      dockerfile: deploy/docker/app/Dockerfile
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-    # entrypoint: ["./entrypoint.sh"]
     volumes:
       - "../../app:/usr/app:rw"
       - "../../data:/usr/app/data:rw"

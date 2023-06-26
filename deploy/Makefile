@@ -1,17 +1,23 @@
-COMPOSE_FILE=docker/development.yml
-ENV_FILE=.env
+# DEVELOPMENT
+DEVELOPMENT_COMPOSE_FILE=docker/development.yml
+DEVELOPMENT_ENV_FILE=example.env
 
-build:
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE)  build -d
-
-up:
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) up -d
-
-build_up:
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) up -d --build
+dev_build_up:
+	docker-compose -f $(DEVELOPMENT_COMPOSE_FILE) --env-file $(DEVELOPMENT_ENV_FILE) up -d --build
 
 dev_up:
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) up
+	docker-compose -f $(DEVELOPMENT_COMPOSE_FILE) --env-file $(DEVELOPMENT_ENV_FILE) up
 
-create_demo_user:
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) exec web$(w) python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')"
+dev_create_demo_user:
+	docker-compose -f $(DEVELOPMENT_COMPOSE_FILE) --env-file $(DEVELOPMENT_ENV_FILE) exec web$(w) python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')"
+
+# PRODUCTION
+
+PRODUCTION_COMPOSE_FILE=docker/production.yml
+PRODUCTION_ENV_FILE=.env
+
+prod_build:
+	docker-compose -f $(PRODUCTION_COMPOSE_FILE) --env-file $(PRODUCTION_ENV_FILE)  build
+
+prod_up:
+	docker-compose -f $(PRODUCTION_COMPOSE_FILE) --env-file $(PRODUCTION_ENV_FILE) up -d
