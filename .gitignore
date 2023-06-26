@@ -379,4 +379,6 @@ fabric.properties
 pyvenv.cfg
 pip-selfcheck.json
 
+.env
+deploy/.env
 # End of https://www.toptal.com/developers/gitignore/api/python,django,venv,pycharm

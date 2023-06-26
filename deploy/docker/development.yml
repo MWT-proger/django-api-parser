@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+
+  app:
+    build:
+      context: ../../.
+      dockerfile: deploy/docker/app/Dockerfile.dev
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    # entrypoint: ["./entrypoint.sh"]
+    volumes:
+      - "../../app:/usr/app:rw"
+      - "../../data:/usr/app/data:rw"
+    ports:
+      - "${APP_PORT}:8000"
+    environment:
+      - DEBUG=${APP_DEBUG}
+      - SECRET_KEY=${APP_SECRET_KEY}
+      - ALLOWED_HOSTS=${APP_ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${APP_CSRF_TRUSTED_ORIGINS}
+
+      - DB_NAME=${DB_NAME}
