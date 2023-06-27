@@ -5,21 +5,26 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from parser.services.trts import get_trts_answer
 from parser.services.tnved_to_okpd2 import convert_tnved_to_okpd2
-
-from parser.serializers import DataOkpd2Serializer, DataTnvedSerializer, ErrorsSerializer, Okpd2Serializer, TnvedSerializer
+from parser.serializers import (DataOkpd2Serializer, DataTnvedSerializer, 
+                                DataTrtsSerializer, ErrorsSerializer, 
+                                Okpd2Serializer, TnvedSerializer, TrtsSerializer)
 from parser.services.driver_manager import DriverChromeManager
 from parser.services.tnved import get_tnved_code
 
+
 param = openapi.Parameter('key', openapi.IN_QUERY,
                           description="Ключ парсинга", type=openapi.TYPE_STRING)
-success_response = openapi.Response('Список', DataTnvedSerializer)
+
+tnved_success_response = openapi.Response('Tnved', DataTnvedSerializer)
 okpd_success_response = openapi.Response('Okpd2', DataOkpd2Serializer)
-errors_response = openapi.Response('Список', ErrorsSerializer)
+trts_success_response = openapi.Response('Trts', DataTrtsSerializer)
+errors_response = openapi.Response('Ошибка', ErrorsSerializer)
 
 
-@swagger_auto_schema(method='get', manual_parameters=[param], responses={200: success_response,400: errors_response})
+@swagger_auto_schema(method='get', manual_parameters=[param], responses={200: tnved_success_response,400: errors_response})
 @api_view(['GET'])
 def tnved_view(request):
 
@@ -38,6 +43,7 @@ def tnved_view(request):
 
     return Response({"errors": "Информация не найдена."}, 
                     status=status.HTTP_400_BAD_REQUEST)
+
 
 @swagger_auto_schema(method='get', manual_parameters=[param], responses={200: okpd_success_response,400: errors_response})
 @api_view(['GET'])
@@ -62,7 +68,8 @@ def tnved_okpd(request):
     return Response({"errors": "Информация не найдена."}, 
                     status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method='get', manual_parameters=[param], responses={200: success_response,400: errors_response})
+
+@swagger_auto_schema(method='get', manual_parameters=[param], responses={200: trts_success_response,400: errors_response})
 @api_view(['GET'])
 def trts(request):
 
@@ -73,12 +80,11 @@ def trts(request):
 
     with DriverChromeManager() as driver:
 
-        
         data = get_trts_answer(product_name=key, driver=driver)
 
         if data:
-            # serializer = TnvedSerializer(data, many=True)
-            return Response({"data": data})
+            serializer = TrtsSerializer(data, many=True)
+            return Response({"data": serializer.data})
 
     return Response({"errors": "Информация не найдена."}, 
                     status=status.HTTP_400_BAD_REQUEST)

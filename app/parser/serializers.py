@@ -20,3 +20,11 @@ class Okpd2Serializer(serializers.Serializer):
 
 class DataOkpd2Serializer(serializers.Serializer):
     data = Okpd2Serializer()
+
+
+class TrtsSerializer(serializers.Serializer):
+    name = serializers.CharField()
+
+
+class DataTrtsSerializer(serializers.Serializer):
+    data = TrtsSerializer()
