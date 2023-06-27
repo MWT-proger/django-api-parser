@@ -4,6 +4,7 @@ services:
 
   app:
     container_name: prodApp
+    restart: always
     build:
       context: ../../.
       dockerfile: deploy/docker/app/Dockerfile
@@ -24,6 +25,7 @@ services:
 
   nginx:
     container_name: prodNginx
+    restart: always
     build:
       context: ../../.
       dockerfile: deploy/docker/nginx/Dockerfile
