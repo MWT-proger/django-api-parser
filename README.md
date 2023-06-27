@@ -14,11 +14,14 @@
 ```
 apt update
 ```
+
 ```
 apt install docker-compose -y
 ```
+
 ```
 apt install make -y
+```
 
 1. Клонировать репозиторий на свой компьютер:
 
